@@ -115,13 +115,13 @@ class Block {
 					'update_post_term_cache' => false,
 				]
 			);
-
+			$max_posts = ( $query->found_posts > 5 ) ? 5 : $query->found_posts;
 			if ( $query->found_posts ) :
 				?>
 				<h2>
 					<?php
 					/* translators: %d: total posts */
-					echo sprintf( esc_html( _n( '%d post with the tag of foo and the category of baz', '%d posts with the tag of foo and the category of baz', $query->found_posts, 'site-counts' ) ), esc_html( $query->found_posts ) );
+					echo sprintf( esc_html( _n( '%d post with the tag of foo and the category of baz', '%d posts with the tag of foo and the category of baz', $max_posts, 'site-counts' ) ), esc_html( $max_posts ) );
 					?>
 				</h2>
 				<ul>
@@ -129,7 +129,7 @@ class Block {
 				$current_post_id = get_the_ID();
 				$cntr            = 0;
 				foreach ( $query->posts as $post ) :
-					if ( $post->ID !== $current_post_id && $cntr < 5 ) {
+					if ( $post->ID !== $current_post_id && $cntr < $max_posts ) {
 						$cntr++;
 						?>
 					<li>
