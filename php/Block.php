@@ -66,7 +66,6 @@ class Block {
 		$post_types = get_post_types( [ 'public' => true ] );
 		$class_name = $attributes['className'];
 		ob_start();
-
 		?>
 		<div class="<?php echo esc_attr( $class_name ); ?>">
 			<h2>Post Counts</h2>
@@ -76,52 +75,74 @@ class Block {
 				$post_type_object = get_post_type_object( $post_type_slug );
 				$query            = new WP_Query(
 					[
-							'post_type' => $post_type_slug,
-							'posts_per_page' => -1,
-						]
-					)
-                );
-
+						'post_type'              => $post_type_slug,
+						'post_status'            => 'any',
+						'update_post_meta_cache' => false,
+						'update_post_term_cache' => false,
+						'fields'                 => 'ids',
+					]
+				);
 				?>
-				<li><?php echo 'There are ' . $post_count . ' ' .
-					  $post_type_object->labels->name . '.'; ?></li>
-			<?php endforeach;	?>
-			</ul><p><?php echo 'The current post ID is ' . $_GET['post_id'] . '.'; ?></p>
+				<li>
+				<?php
+				$label_string = ( 1 === $query->found_posts ) ? $post_type_object->labels->singular_name : $post_type_object->labels->name;
+				/* translators: %d: total posts */
+				echo sprintf( _n( 'There is %1$d %2$s.', 'There are %1$d %2$s.', $query->found_posts, 'site-counts' ), $query->found_posts, $label_string );
+				?>
+				</li>
+			<?php endforeach; ?>
+			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && intval( $_GET['post_id'] ) > 0 ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
 
 			<?php
-			$query = new WP_Query(  array(
-				'post_type' => ['post', 'page'],
-				'post_status' => 'any',
-				'date_query' => array(
-					array(
-						'hour'      => 9,
-						'compare'   => '>=',
-					),
-					array(
-						'hour' => 17,
-						'compare'=> '<=',
-					),
-				),
-                'tag'  => 'foo',
-                'category_name'  => 'baz',
-				  'post__not_in' => [ get_the_ID() ],
-			));
+			$query = new WP_Query(
+				[
+					'post_type'      => [ 'post', 'page' ],
+					'post_status'    => 'any',
+					'date_query'     => [
+						[
+							'hour'    => 9,
+							'compare' => '>=',
+						],
+						[
+							'hour'    => 17,
+							'compare' => '<=',
+						],
+					],
+					'tag'            => 'foo',
+					'category_name'  => 'baz',
+					'posts_per_page' => 6,
+				]
+			);
 
 			if ( $query->found_posts ) :
 				?>
-				 <h2>5 posts with the tag of foo and the category of baz</h2>
-                <ul>
-                <?php
-
-                 foreach ( array_slice( $query->posts, 0, 5 ) as $post ) :
-                    ?><li><?php echo $post->post_title ?></li><?php
+				<h2>
+					<?php
+					/* translators: %d: total posts */
+					echo sprintf( _n( '%d post with the tag of foo and the category of baz', '%d posts with the tag of foo and the category of baz', $query->found_posts, 'site-counts' ), $query->found_posts );
+					?>
+				</h2>
+				<ul>
+				<?php
+				$current_post_id = get_the_ID();
+				$cntr            = 0;
+				foreach ( $query->posts as $post ) :
+					if ( $post->ID !== $current_post_id && $cntr < 5 ) {
+						$cntr++;
+						?>
+					<li>
+						<?php
+						echo $post->post_title;
+						?>
+					</li>
+						<?php
+					}
 				endforeach;
 			endif;
-		 	?>
+			?>
 			</ul>
 		</div>
 		<?php
-
 		return ob_get_clean();
 	}
 }
