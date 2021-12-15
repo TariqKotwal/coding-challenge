@@ -87,11 +87,11 @@ class Block {
 				<?php
 				$label_string = ( 1 === $query->found_posts ) ? $post_type_object->labels->singular_name : $post_type_object->labels->name;
 				/* translators: %d: total posts */
-				echo sprintf( _n( 'There is %1$d %2$s.', 'There are %1$d %2$s.', $query->found_posts, 'site-counts' ), $query->found_posts, $label_string );
+				echo sprintf( esc_html( _n( 'There is %1$d %2$s.', 'There are %1$d %2$s.', $query->found_posts, 'site-counts' ) ), esc_html( $query->found_posts ), esc_html( $label_string ) );
 				?>
 				</li>
 			<?php endforeach; ?>
-			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && is_numeric( $_GET['post_id'] ) ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
+			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && is_numeric( $_GET['post_id'] ) ) ? 'The current post ID is ' . esc_html( sanitize_text_field( $_GET['post_id'] ) ) . '.' : ''; ?></p>
 
 			<?php
 			$query = new WP_Query(
@@ -121,7 +121,7 @@ class Block {
 				<h2>
 					<?php
 					/* translators: %d: total posts */
-					echo sprintf( _n( '%d post with the tag of foo and the category of baz', '%d posts with the tag of foo and the category of baz', $query->found_posts, 'site-counts' ), $query->found_posts );
+					echo sprintf( esc_html( _n( '%d post with the tag of foo and the category of baz', '%d posts with the tag of foo and the category of baz', $query->found_posts, 'site-counts' ) ), esc_html( $query->found_posts ) );
 					?>
 				</h2>
 				<ul>
@@ -134,7 +134,7 @@ class Block {
 						?>
 					<li>
 						<?php
-						echo $post->post_title;
+						echo esc_html( $post->post_title );
 						?>
 					</li>
 						<?php
