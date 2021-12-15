@@ -91,14 +91,14 @@ class Block {
 				?>
 				</li>
 			<?php endforeach; ?>
-			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && intval( $_GET['post_id'] ) > 0 ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
+			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && is_numeric($_GET['post_id']) ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
 
 			<?php
 			$query = new WP_Query(
 				[
-					'post_type'      => [ 'post', 'page' ],
-					'post_status'    => 'any',
-					'date_query'     => [
+					'post_type'              => [ 'post', 'page' ],
+					'post_status'            => 'any',
+					'date_query'             => [
 						[
 							'hour'    => 9,
 							'compare' => '>=',
@@ -108,9 +108,11 @@ class Block {
 							'compare' => '<=',
 						],
 					],
-					'tag'            => 'foo',
-					'category_name'  => 'baz',
-					'posts_per_page' => 6,
+					'tag'                    => 'foo',
+					'category_name'          => 'baz',
+					'posts_per_page'         => 6,
+					'update_post_meta_cache' => false,
+					'update_post_term_cache' => false,
 				]
 			);
 
