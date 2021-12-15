@@ -68,7 +68,7 @@ class Block {
 		ob_start();
 
 		?>
-        <div class="<?php echo $class_name; ?>">
+		<div class="<?php echo esc_attr( $class_name ); ?>">
 			<h2>Post Counts</h2>
 			<ul>
 			<?php
