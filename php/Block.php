@@ -91,7 +91,7 @@ class Block {
 				?>
 				</li>
 			<?php endforeach; ?>
-			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && is_numeric($_GET['post_id']) ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
+			</ul><p><?php echo ( ! empty( $_GET['post_id'] ) && is_numeric( $_GET['post_id'] ) ) ? 'The current post ID is ' . $_GET['post_id'] . '.' : ''; ?></p>
 
 			<?php
 			$query = new WP_Query(
