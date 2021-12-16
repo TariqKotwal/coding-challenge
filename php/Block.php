@@ -73,15 +73,20 @@ class Block {
 			<?php
 			foreach ( $post_types as $post_type_slug ) :
 				$post_type_object = get_post_type_object( $post_type_slug );
-				$query            = new WP_Query(
-					[
-						'post_type'              => $post_type_slug,
-						'post_status'            => 'any',
-						'update_post_meta_cache' => false,
-						'update_post_term_cache' => false,
-						'fields'                 => 'ids',
-					]
-				);
+				$key              = $post_type_slug . '_total_posts_count_query';
+				$query            = get_transient( $key );
+				if ( ! $query ) {
+					$query = new WP_Query(
+						[
+							'post_type'              => $post_type_slug,
+							'post_status'            => 'any',
+							'update_post_meta_cache' => false,
+							'update_post_term_cache' => false,
+							'fields'                 => 'ids',
+						]
+					);
+					set_transient( $key, $query, 3600 );
+				}
 				?>
 				<li>
 				<?php
